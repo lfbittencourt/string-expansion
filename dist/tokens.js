@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Pipe = exports.QuestionMark = exports.RightParenthesis = exports.LeftParenthesis = exports.Text = void 0;
+const chevrotain_1 = require("chevrotain");
+exports.Text = (0, chevrotain_1.createToken)({ name: 'Text', pattern: /(\w|\s)+/ });
+exports.LeftParenthesis = (0, chevrotain_1.createToken)({ name: 'LeftParenthesis', pattern: '(' });
+exports.RightParenthesis = (0, chevrotain_1.createToken)({ name: 'RightParenthesis', pattern: ')' });
+exports.QuestionMark = (0, chevrotain_1.createToken)({ name: 'QuestionMark', pattern: '?' });
+exports.Pipe = (0, chevrotain_1.createToken)({ name: 'Pipe', pattern: '|' });
+exports.default = [exports.Text, exports.LeftParenthesis, exports.RightParenthesis, exports.QuestionMark, exports.Pipe];
