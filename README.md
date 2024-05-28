@@ -51,6 +51,19 @@ Optional groups are followed by a `?`:
 (a|b)? => ['a', 'b', '']
 ```
 
+Groups can have a single option:
+
+```
+(a) => ['a']
+```
+
+You can use a single-option group combined with the optional character `?` to
+make more than one character optional:
+
+```
+(ab)? => ['ab', '']
+```
+
 Groups can be nested:
 
 ```
