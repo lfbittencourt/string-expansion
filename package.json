@@ -1,6 +1,6 @@
 {
   "name": "string-expansion",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A package for expanding strings using nested And and Or objects",
   "main": "dist/index.js",
   "author": "LF Bittencourt <lf@lfbittencourt.com>",
