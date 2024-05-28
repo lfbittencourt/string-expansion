@@ -2,8 +2,9 @@ import { EmbeddedActionsParser } from 'chevrotain';
 
 import { And, LogicalChildren, Or } from './logical';
 
-import tokens, { Text, LeftParenthesis, RightParenthesis, QuestionMark, Pipe } from './tokens';
-
+import tokens, {
+  Text, LeftParenthesis, RightParenthesis, QuestionMark, Pipe,
+} from './tokens';
 
 /**
  * GRAMMAR

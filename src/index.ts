@@ -4,7 +4,6 @@ import expandTree from './expand-tree';
 import Parser from './parser';
 import tokens from './tokens';
 
-
 const lexer = new Lexer(tokens);
 const parser = new Parser();
 

@@ -1,6 +1,5 @@
 import { And, LogicalChild, Or } from './logical';
 
-
 export default function expandTree(tree: LogicalChild): string[] {
   if (typeof tree === 'string') {
     return [tree];

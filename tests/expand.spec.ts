@@ -40,7 +40,7 @@ describe('expand', () => {
       'Mary Simmons Smithson',
       'Mary Simmons Smith',
       'Mary Smithson',
-      'Mary Smith'
+      'Mary Smith',
     ].sort());
   });
 });

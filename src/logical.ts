@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 export type LogicalChild = string | And | Or;
 export type LogicalChildren = LogicalChild[];
 
