@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "author": "LF Bittencourt <lf@lfbittencourt.com>",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts",
