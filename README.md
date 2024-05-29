@@ -8,13 +8,13 @@ possible combinations.
 Using `yarn`:
 
 ```bash
-yarn install github:lfbittencourt/string-expansion
+yarn install string-expansion
 ```
 
 Using `npm`:
 
 ```bash
-npm install github:lfbittencourt/string-expansion
+npm install string-expansion
 ```
 
 ## Usage
