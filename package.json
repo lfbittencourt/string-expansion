@@ -10,8 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "test": "jest"
   },
   "devDependencies": {
