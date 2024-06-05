@@ -1,17 +1,14 @@
-name: String Expansion CI
+name: Test and build
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_call:
 
 jobs:
-  build:
-
+  test-and-build:
     runs-on: ubuntu-latest
-
     steps:
 
       - name: Checkout code
@@ -34,9 +31,3 @@ jobs:
 
       - name: Build project
         run: yarn build
-
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
