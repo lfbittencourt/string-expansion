@@ -32,6 +32,12 @@ console.log(result); // ['a', 'b']
 The syntax is similar to regular expressions and its composed by just a few
 different tokens.
 
+Literal strings output themselves:
+
+```
+a => ['a']
+```
+
 Optional characters are followed by a `?`:
 
 ```
