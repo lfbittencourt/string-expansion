@@ -76,6 +76,33 @@ Groups can be nested:
 (a(b|c)) => ['ab', 'ac']
 ```
 
+You can also uso inclusive groups (or simply igroups), whose options are
+separated by `||`. Different from the standard groups, igroups also output an
+option that concatenates all of its options:
+
+```
+(a||b) => ['a', 'b', 'ab']
+```
+
+As with standard groups, igroups can be optional:
+
+```
+(a||b)? => ['a', 'b', 'ab', '']
+```
+
+Igroups can also be nested:
+
+```
+(a||(b||c)) => ['a', 'b', 'c', 'ab', 'ac']
+```
+
+> [!WARNING]
+> You can't mix standard groups and igroups in the same expression.
+
+```
+(a|b||c) => Error
+```
+
 Finally, you can mix all of them into complex patterns:
 
 ```
