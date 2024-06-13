@@ -3,7 +3,7 @@ import { EmbeddedActionsParser } from 'chevrotain';
 import { And, LogicalChildren, Or } from './logical';
 
 import tokens, {
-  Text, LeftParenthesis, RightParenthesis, QuestionMark, Pipe,
+  Text, LeftParenthesis, RightParenthesis, QuestionMark, Pipe, PlusSign,
 } from './tokens';
 
 /**
@@ -16,7 +16,11 @@ import tokens, {
  *   Text QuestionMark
  *
  * optionableGroup:
- *   LeftParenthesis tree (Pipe tree)* RightParenthesis (QuestionMark)?
+ *   LeftParenthesis
+ *   (PlusSign)?
+ *   tree (Pipe tree)*
+ *   RightParenthesis
+ *   (QuestionMark)?
  *
  * tree:
  *   element+
@@ -39,9 +43,11 @@ export default class Parser extends EmbeddedActionsParser {
   });
 
   private optionableGroup = this.RULE('optionableGroup', () => {
-    const alternatives = [];
+    const alternatives: LogicalChildren = [];
 
     this.CONSUME(LeftParenthesis);
+
+    const isIgroup = this.OPTION1(() => this.CONSUME(PlusSign));
 
     this.AT_LEAST_ONE_SEP({
       SEP: Pipe,
@@ -50,7 +56,11 @@ export default class Parser extends EmbeddedActionsParser {
 
     this.CONSUME(RightParenthesis);
 
-    if (this.OPTION(() => this.CONSUME(QuestionMark))) {
+    if (isIgroup && alternatives.length > 1) {
+      alternatives.push(new And(...alternatives));
+    }
+
+    if (this.OPTION2(() => this.CONSUME(QuestionMark))) {
       alternatives.push('');
     }
 
