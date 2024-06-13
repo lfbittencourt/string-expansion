@@ -88,7 +88,7 @@ Groups can be nested:
 
 ### Inclusive groups
 
-You can also uso inclusive groups (or simply igroups) by using a plus sign (`+`)
+You can also use inclusive groups (or simply igroups) by using a plus sign (`+`)
 before the options. Different from the standard groups, igroups also output an
 option that concatenates all of its options:
 
