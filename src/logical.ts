@@ -5,8 +5,8 @@ export type LogicalChildren = LogicalChild[];
 class Logical {
   children: LogicalChildren;
 
-  constructor(...args: LogicalChildren) {
-    this.children = args;
+  constructor(...children: LogicalChildren) {
+    this.children = children;
   }
 }
 
