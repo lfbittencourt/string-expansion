@@ -68,14 +68,14 @@ export default class Parser extends EmbeddedActionsParser {
   ]));
 
   public tree = this.RULE('tree', () => {
-    const variations: LogicalChildren = [];
+    const children: LogicalChildren = [];
 
-    this.AT_LEAST_ONE(() => variations.push(this.SUBRULE(this.element)));
+    this.AT_LEAST_ONE(() => children.push(this.SUBRULE(this.element)));
 
-    if (variations.length === 1) {
-      return variations[0];
+    if (children.length === 1) {
+      return children[0];
     }
 
-    return new And(...variations);
+    return new And(...children);
   });
 }
