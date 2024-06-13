@@ -113,7 +113,7 @@ Igroups can also be nested:
 Finally, you can mix all of them into complex patterns:
 
 ```
-Mary( Eli(z|s)abeth)?( Simmons)? Smith(son)? => [
+Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?) => [
   'Mary Elisabeth Simmons',
   'Mary Elisabeth Simmons Smith',
   'Mary Elisabeth Simmons Smithson',
