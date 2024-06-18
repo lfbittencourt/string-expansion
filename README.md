@@ -108,6 +108,14 @@ Igroups can also be nested:
 (+a|(+b|c)) => ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
 ```
 
+### Escaping
+
+You can escape special characters by using a backslash (`\`):
+
+```
+\(a\|b\) => ['(a|b)']
+```
+
 ### Complex patterns
 
 Finally, you can mix all of them into complex patterns:
