@@ -3,17 +3,30 @@ import { EmbeddedActionsParser } from 'chevrotain';
 import { And, LogicalChildren, Or } from './logical';
 
 import tokens, {
-  Text, LeftParenthesis, RightParenthesis, QuestionMark, Pipe, PlusSign,
+  Backslash,
+  escapableTokens,
+  LeftParenthesis,
+  Pipe,
+  PlusSign,
+  QuestionMark,
+  RightParenthesis,
+  Text,
 } from './tokens';
 
 /**
  * GRAMMAR
  *
  * element:
- *   Text | optionalText | optionableGroup
+ *   optionableEscapedToken | optionableText | optionableGroup
  *
- * optionalText:
- *   Text QuestionMark
+ * optionableEscapedToken:
+ *   Backslash
+ *   (Backslash | LeftParenthesis | Pipe | PlusSign | QuestionMark | RightParenthesis)
+ *   (QuestionMark)?
+ *
+ * optionableText:
+ *   Text
+ *   (QuestionMark)?
  *
  * optionableGroup:
  *   LeftParenthesis
@@ -32,14 +45,28 @@ export default class Parser extends EmbeddedActionsParser {
     this.performSelfAnalysis();
   }
 
-  private text = this.RULE('text', () => this.CONSUME(Text).image);
+  private optionableEscapedToken = this.RULE('escapedToken', () => {
+    this.CONSUME1(Backslash);
 
-  private optionalText = this.RULE('optionalText', () => {
-    const text: string = this.SUBRULE(this.text);
+    const token = this.OR(
+      escapableTokens.map((escapableToken) => ({ ALT: () => this.CONSUME2(escapableToken) })),
+    );
 
-    this.CONSUME(QuestionMark);
+    if (this.OPTION(() => this.CONSUME(QuestionMark))) {
+      return new Or(token.image, '');
+    }
 
-    return this.ACTION(() => new Or(text, text.slice(0, -1)));
+    return token.image;
+  });
+
+  private optionableText = this.RULE('optionalText', () => {
+    const text: string = this.CONSUME(Text).image;
+
+    if (this.OPTION(() => this.CONSUME(QuestionMark))) {
+      return new Or(text, text.slice(0, -1));
+    }
+
+    return text;
   });
 
   private optionableGroup = this.RULE('optionableGroup', () => {
@@ -72,8 +99,8 @@ export default class Parser extends EmbeddedActionsParser {
   });
 
   private element = this.RULE('element', () => this.OR([
-    { ALT: () => this.SUBRULE(this.optionalText) },
-    { ALT: () => this.SUBRULE(this.text) },
+    { ALT: () => this.SUBRULE(this.optionableEscapedToken) },
+    { ALT: () => this.SUBRULE(this.optionableText) },
     { ALT: () => this.SUBRULE(this.optionableGroup) },
   ]));
 
