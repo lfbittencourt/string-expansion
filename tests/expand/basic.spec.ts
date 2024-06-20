@@ -1,4 +1,4 @@
-import expand from '../src';
+import expand from '../../src';
 
 describe('basic', () => {
   it('should expand literal strings', () => {
