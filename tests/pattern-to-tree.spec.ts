@@ -1,4 +1,4 @@
-import patternToTree from "../src/pattern-to-tree";
+import patternToTree from '../src/pattern-to-tree';
 
 describe('pattern-to-tree', () => {
   it('single-option groups should return the option itself', () => {
