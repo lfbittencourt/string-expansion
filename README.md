@@ -20,7 +20,7 @@ npm install string-expansion
 ## Usage
 
 ```javascript
-import expand from 'string-expansion';
+const expand = require('string-expansion'); // We only support CommonJS for now
 
 const result = expand('(a|b)');
 
