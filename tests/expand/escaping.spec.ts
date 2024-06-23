@@ -1,6 +1,6 @@
-import { escapableTokens } from '../src/tokens';
+import { escapableTokens } from '../../src/tokens';
 
-import expand from '../src';
+import expand from '../../src';
 
 describe('escaping', () => {
   it('should escape escaped tokens', () => {

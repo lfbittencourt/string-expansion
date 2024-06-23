@@ -1,4 +1,4 @@
-import expand from '../src';
+import expand from '../../src';
 
 describe('extra', () => {
   it('should expand complex patterns', () => {

@@ -91,6 +91,7 @@ export default class Parser extends EmbeddedActionsParser {
       alternatives.push('');
     }
 
+    // If there's only one alternative, return it directly to avoid unnecessary hops
     if (alternatives.length === 1) {
       return alternatives[0];
     }

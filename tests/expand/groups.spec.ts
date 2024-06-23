@@ -1,4 +1,4 @@
-import expand from '../src';
+import expand from '../../src';
 
 describe('groups', () => {
   it('should expand groups', () => {
