@@ -54,7 +54,6 @@ export default class Lexer {
 
     while (this.position < this.input.length) {
       const tokenStart = this.position;
-      let matched = false;
 
       // Try to match special tokens
       const matchedToken = tokenDefinitions.find((tokenDef) => (
@@ -68,11 +67,8 @@ export default class Lexer {
           position: tokenStart,
         });
         this.position += matchedToken.pattern.length;
-        matched = true;
-      }
-
-      // If no special token matched, try text
-      if (!matched) {
+      } else {
+        // If no special token matched, try text
         const char = this.input[this.position];
         if (this.isTextChar(char)) {
           const text = this.consumeText();
