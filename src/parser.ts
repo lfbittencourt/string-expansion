@@ -3,6 +3,31 @@ import {
 } from './logical';
 import { Token, TokenType } from './lexer';
 
+/**
+ * GRAMMAR
+ *
+ * element:
+ *   optionableEscapedToken | optionableText | optionableGroup
+ *
+ * optionableEscapedToken:
+ *   Backslash
+ *   (Backslash | LeftParenthesis | Pipe | PlusSign | QuestionMark | RightParenthesis)
+ *   (QuestionMark)?
+ *
+ * optionableText:
+ *   Text
+ *   (QuestionMark)?
+ *
+ * optionableGroup:
+ *   LeftParenthesis
+ *   (PlusSign)?
+ *   tree (Pipe tree)*
+ *   RightParenthesis
+ *   (QuestionMark)?
+ *
+ * tree:
+ *   element+
+ */
 export default class Parser {
   private tokens: Token[] = [];
 
@@ -31,6 +56,7 @@ export default class Parser {
       children.push(this.element());
     } while (this.isStartOfElement());
 
+    // If there's only one child, return it directly to avoid unnecessary hops
     if (children.length === 1) {
       return children[0];
     }
@@ -132,6 +158,7 @@ export default class Parser {
       alternatives.push('');
     }
 
+    // If there's only one alternative, return it directly to avoid unnecessary hops
     if (alternatives.length === 1) {
       return alternatives[0];
     }
