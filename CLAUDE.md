@@ -72,8 +72,8 @@ This is a TypeScript package for expanding string patterns with groups, alternat
 
 ### Key Files
 
-- [src/lexer.ts](src/lexer.ts) - Custom lexer for tokenizing patterns
-- [src/parser-custom.ts](src/parser-custom.ts) - Recursive descent parser
+- [src/lexer.ts](src/lexer.ts) - Lexer for tokenizing patterns
+- [src/parser.ts](src/parser.ts) - Recursive descent parser
 - [src/pattern-to-tree.ts](src/pattern-to-tree.ts) - Entry point for parsing
 - [src/logical.ts](src/logical.ts) - And/Or AST node classes
 - [src/expand-tree.ts](src/expand-tree.ts) - Tree expansion logic

@@ -1,5 +1,5 @@
 import { Lexer } from './lexer';
-import Parser from './parser-custom';
+import Parser from './parser';
 
 export = (pattern: string) => {
   try {
