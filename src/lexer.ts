@@ -15,6 +15,21 @@ export enum TokenType {
   EOF = 'EOF',
 }
 
+// Token definitions with their patterns - single source of truth
+interface TokenDefinition {
+  type: TokenType;
+  pattern: string;
+}
+
+export const tokenDefinitions: TokenDefinition[] = [
+  { type: TokenType.LEFT_PAREN, pattern: '(' },
+  { type: TokenType.RIGHT_PAREN, pattern: ')' },
+  { type: TokenType.QUESTION_MARK, pattern: '?' },
+  { type: TokenType.PIPE, pattern: '|' },
+  { type: TokenType.PLUS_SIGN, pattern: '+' },
+  { type: TokenType.BACKSLASH, pattern: '\\' },
+];
+
 export const escapableTokenTypes = [
   TokenType.BACKSLASH,
   TokenType.LEFT_PAREN,
@@ -24,7 +39,10 @@ export const escapableTokenTypes = [
   TokenType.QUESTION_MARK,
 ];
 
-export class Lexer {
+// Text token pattern
+export const textPattern = /[\w\s]/;
+
+export default class Lexer {
   private input: string = '';
 
   private position: number = 0;
@@ -35,32 +53,33 @@ export class Lexer {
     const tokens: Token[] = [];
 
     while (this.position < this.input.length) {
-      const char = this.input[this.position];
       const tokenStart = this.position;
+      let matched = false;
 
-      if (char === '(') {
-        tokens.push({ type: TokenType.LEFT_PAREN, value: '(', position: tokenStart });
-        this.position += 1;
-      } else if (char === ')') {
-        tokens.push({ type: TokenType.RIGHT_PAREN, value: ')', position: tokenStart });
-        this.position += 1;
-      } else if (char === '?') {
-        tokens.push({ type: TokenType.QUESTION_MARK, value: '?', position: tokenStart });
-        this.position += 1;
-      } else if (char === '|') {
-        tokens.push({ type: TokenType.PIPE, value: '|', position: tokenStart });
-        this.position += 1;
-      } else if (char === '+') {
-        tokens.push({ type: TokenType.PLUS_SIGN, value: '+', position: tokenStart });
-        this.position += 1;
-      } else if (char === '\\') {
-        tokens.push({ type: TokenType.BACKSLASH, value: '\\', position: tokenStart });
-        this.position += 1;
-      } else if (this.isTextChar(char)) {
-        const text = this.consumeText();
-        tokens.push({ type: TokenType.TEXT, value: text, position: tokenStart });
-      } else {
-        throw new Error(`Unexpected character '${char}' at position ${this.position}`);
+      // Try to match special tokens
+      const matchedToken = tokenDefinitions.find((tokenDef) => (
+        this.input.startsWith(tokenDef.pattern, this.position)
+      ));
+
+      if (matchedToken) {
+        tokens.push({
+          type: matchedToken.type,
+          value: matchedToken.pattern,
+          position: tokenStart,
+        });
+        this.position += matchedToken.pattern.length;
+        matched = true;
+      }
+
+      // If no special token matched, try text
+      if (!matched) {
+        const char = this.input[this.position];
+        if (this.isTextChar(char)) {
+          const text = this.consumeText();
+          tokens.push({ type: TokenType.TEXT, value: text, position: tokenStart });
+        } else {
+          throw new Error(`Unexpected character '${char}' at position ${this.position}`);
+        }
       }
     }
 
@@ -70,7 +89,7 @@ export class Lexer {
 
   // eslint-disable-next-line class-methods-use-this
   private isTextChar(char: string): boolean {
-    return /[\w\s]/.test(char);
+    return textPattern.test(char);
   }
 
   private consumeText(): string {

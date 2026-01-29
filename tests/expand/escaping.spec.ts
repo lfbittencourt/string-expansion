@@ -1,24 +1,22 @@
-import { escapableTokenTypes, TokenType } from '../../src/lexer';
+import { escapableTokenTypes, tokenDefinitions } from '../../src/lexer';
 
 import expand from '../../src';
 
-// Map TokenType to actual character pattern
-const tokenTypeToPattern: Record<TokenType, string> = {
-  [TokenType.BACKSLASH]: '\\',
-  [TokenType.LEFT_PAREN]: '(',
-  [TokenType.RIGHT_PAREN]: ')',
-  [TokenType.PIPE]: '|',
-  [TokenType.PLUS_SIGN]: '+',
-  [TokenType.QUESTION_MARK]: '?',
-  [TokenType.TEXT]: '',
-  [TokenType.EOF]: '',
-};
-
 describe('escaping', () => {
   it('should escape escaped tokens', () => {
-    const result = expand(escapableTokenTypes.map((type) => `\\${tokenTypeToPattern[type]}`).join('')).sort();
+    // Build the test pattern from tokenDefinitions
+    const escapablePatterns = tokenDefinitions
+      .filter((def) => escapableTokenTypes.includes(def.type))
+      .map((def) => `\\${def.pattern}`)
+      .join('');
 
-    expect(result).toEqual([escapableTokenTypes.map((type) => tokenTypeToPattern[type]).join('')].sort());
+    const expectedPatterns = tokenDefinitions
+      .filter((def) => escapableTokenTypes.includes(def.type))
+      .map((def) => def.pattern)
+      .join('');
+
+    const result = expand(escapablePatterns).sort();
+    expect(result).toEqual([expectedPatterns].sort());
   });
 
   it('should escape escape parenthesis', () => {
