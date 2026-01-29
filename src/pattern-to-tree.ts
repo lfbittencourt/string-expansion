@@ -1,4 +1,4 @@
-import { Lexer } from './lexer';
+import Lexer from './lexer';
 import Parser from './parser';
 
 export = (pattern: string) => {
@@ -11,9 +11,6 @@ export = (pattern: string) => {
 
     return tree;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Parsing error detected!\n${error.message}`);
-    }
-    throw error;
+    throw new Error(`Parsing error detected!\n${(error as Error).message}`);
   }
 };
