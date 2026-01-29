@@ -19,25 +19,21 @@ export enum TokenType {
 interface TokenDefinition {
   type: TokenType;
   pattern: string;
+  escapable?: boolean;
 }
 
 export const tokenDefinitions: TokenDefinition[] = [
-  { type: TokenType.LEFT_PAREN, pattern: '(' },
-  { type: TokenType.RIGHT_PAREN, pattern: ')' },
-  { type: TokenType.QUESTION_MARK, pattern: '?' },
-  { type: TokenType.PIPE, pattern: '|' },
-  { type: TokenType.PLUS_SIGN, pattern: '+' },
-  { type: TokenType.BACKSLASH, pattern: '\\' },
+  { type: TokenType.LEFT_PAREN, pattern: '(', escapable: true },
+  { type: TokenType.RIGHT_PAREN, pattern: ')', escapable: true },
+  { type: TokenType.QUESTION_MARK, pattern: '?', escapable: true },
+  { type: TokenType.PIPE, pattern: '|', escapable: true },
+  { type: TokenType.PLUS_SIGN, pattern: '+', escapable: true },
+  { type: TokenType.BACKSLASH, pattern: '\\', escapable: true },
 ];
 
-export const escapableTokenTypes = [
-  TokenType.BACKSLASH,
-  TokenType.LEFT_PAREN,
-  TokenType.RIGHT_PAREN,
-  TokenType.PIPE,
-  TokenType.PLUS_SIGN,
-  TokenType.QUESTION_MARK,
-];
+export const escapableTokenTypes = tokenDefinitions
+  .filter((def) => def.escapable)
+  .map((def) => def.type);
 
 // Text token pattern
 export const textPattern = /[\w\s]/;
