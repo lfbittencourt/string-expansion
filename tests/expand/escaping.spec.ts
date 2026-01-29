@@ -1,12 +1,24 @@
-import { escapableTokens } from '../../src/tokens';
+import { escapableTokenTypes, TokenType } from '../../src/lexer';
 
 import expand from '../../src';
 
+// Map TokenType to actual character pattern
+const tokenTypeToPattern: Record<TokenType, string> = {
+  [TokenType.BACKSLASH]: '\\',
+  [TokenType.LEFT_PAREN]: '(',
+  [TokenType.RIGHT_PAREN]: ')',
+  [TokenType.PIPE]: '|',
+  [TokenType.PLUS_SIGN]: '+',
+  [TokenType.QUESTION_MARK]: '?',
+  [TokenType.TEXT]: '',
+  [TokenType.EOF]: '',
+};
+
 describe('escaping', () => {
   it('should escape escaped tokens', () => {
-    const result = expand(escapableTokens.map((token) => `\\${token.PATTERN}`).join('')).sort();
+    const result = expand(escapableTokenTypes.map((type) => `\\${tokenTypeToPattern[type]}`).join('')).sort();
 
-    expect(result).toEqual([escapableTokens.map((token) => token.PATTERN).join('')].sort());
+    expect(result).toEqual([escapableTokenTypes.map((type) => tokenTypeToPattern[type]).join('')].sort());
   });
 
   it('should escape escape parenthesis', () => {
