@@ -26,6 +26,7 @@ export const escapableTokenTypes = [
 
 export class Lexer {
   private input: string = '';
+
   private position: number = 0;
 
   tokenize(input: string): Token[] {
@@ -39,22 +40,22 @@ export class Lexer {
 
       if (char === '(') {
         tokens.push({ type: TokenType.LEFT_PAREN, value: '(', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (char === ')') {
         tokens.push({ type: TokenType.RIGHT_PAREN, value: ')', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (char === '?') {
         tokens.push({ type: TokenType.QUESTION_MARK, value: '?', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (char === '|') {
         tokens.push({ type: TokenType.PIPE, value: '|', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (char === '+') {
         tokens.push({ type: TokenType.PLUS_SIGN, value: '+', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (char === '\\') {
         tokens.push({ type: TokenType.BACKSLASH, value: '\\', position: tokenStart });
-        this.position++;
+        this.position += 1;
       } else if (this.isTextChar(char)) {
         const text = this.consumeText();
         tokens.push({ type: TokenType.TEXT, value: text, position: tokenStart });
@@ -67,6 +68,7 @@ export class Lexer {
     return tokens;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isTextChar(char: string): boolean {
     return /[\w\s]/.test(char);
   }
@@ -75,7 +77,7 @@ export class Lexer {
     let text = '';
     while (this.position < this.input.length && this.isTextChar(this.input[this.position])) {
       text += this.input[this.position];
-      this.position++;
+      this.position += 1;
     }
     return text;
   }

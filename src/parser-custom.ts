@@ -1,15 +1,19 @@
-import { And, LogicalChild, LogicalChildren, Or } from './logical';
+import {
+  And, LogicalChild, LogicalChildren, Or,
+} from './logical';
 import { Token, TokenType } from './lexer';
 
-export class Parser {
+export default class Parser {
   private tokens: Token[] = [];
+
   private position: number = 0;
+
   private current: Token = { type: TokenType.EOF, value: '', position: 0 };
 
   parse(tokens: Token[]): LogicalChild {
     this.tokens = tokens;
     this.position = 0;
-    this.current = tokens[0];
+    [this.current] = tokens;
 
     const tree = this.tree();
 
@@ -35,10 +39,10 @@ export class Parser {
   }
 
   private isStartOfElement(): boolean {
-    const type = this.peek().type;
-    return type === TokenType.BACKSLASH ||
-           type === TokenType.TEXT ||
-           type === TokenType.LEFT_PAREN;
+    const { type } = this.peek();
+    return type === TokenType.BACKSLASH
+           || type === TokenType.TEXT
+           || type === TokenType.LEFT_PAREN;
   }
 
   private element(): LogicalChild {
@@ -59,7 +63,7 @@ export class Parser {
     this.consume(TokenType.BACKSLASH);
 
     const escapable = this.consumeEscapable();
-    const value = escapable.value;
+    const { value } = escapable;
 
     if (this.match(TokenType.QUESTION_MARK)) {
       this.advance();
@@ -140,7 +144,7 @@ export class Parser {
   private advance(): Token {
     const previous = this.current;
     if (this.position < this.tokens.length - 1) {
-      this.position++;
+      this.position += 1;
       this.current = this.tokens[this.position];
     }
     return previous;
