@@ -38,6 +38,7 @@ export default class Parser {
     return new And(...children);
   }
 
+  // Check if current token can start an element (for lookahead in tree())
   private isStartOfElement(): boolean {
     const { type } = this.peek();
     return type === TokenType.BACKSLASH
@@ -94,6 +95,7 @@ export default class Parser {
     const textToken = this.consume(TokenType.TEXT);
     const text = textToken.value;
 
+    // If followed by '?', make the last character optional: "ab?" → Or("ab", "a")
     if (this.match(TokenType.QUESTION_MARK)) {
       this.advance();
       return new Or(text, text.slice(0, -1));
