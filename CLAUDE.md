@@ -10,6 +10,43 @@ Use:
 - `yarn build` (not `npm run build`)
 - `yarn lint` (not `npm run lint`)
 
+## Code Style
+
+This project uses **ESLint** with Airbnb TypeScript configuration for code quality and consistency.
+
+### Linting
+
+- Always run `yarn lint` before committing
+- Fix auto-fixable issues with `yarn lint:fix`
+- Configuration: `eslint-config-airbnb-typescript`
+
+### Key Style Rules
+
+**Operators:**
+- Use `+= 1` instead of `++` (no-plusplus rule)
+- Place operators at the beginning of continued lines
+
+**Imports/Exports:**
+- Prefer default exports for single-export files
+- Use object destructuring when appropriate
+- Add blank lines between class members
+
+**Methods:**
+- Methods that don't use `this` should include `// eslint-disable-next-line class-methods-use-this` if they conceptually belong to the class
+
+**Formatting:**
+- Use consistent spacing and indentation (handled by ESLint)
+- Break long lines appropriately
+- Add blank lines between logical sections
+
+### Before Committing
+
+```bash
+yarn lint      # Check for issues
+yarn test      # Verify all tests pass
+yarn build     # Ensure TypeScript compiles
+```
+
 ## Git Workflow
 
 ### Commits
