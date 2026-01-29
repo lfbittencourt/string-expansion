@@ -1,5 +1,38 @@
 # Claude Code Project Notes
 
+## Project Structure
+
+This is a TypeScript package for expanding string patterns with groups, alternatives, and optional elements.
+
+### Key Files
+
+- [src/lexer.ts](src/lexer.ts) - Lexer for tokenizing patterns
+- [src/parser.ts](src/parser.ts) - Recursive descent parser
+- [src/pattern-to-tree.ts](src/pattern-to-tree.ts) - Entry point for parsing
+- [src/logical.ts](src/logical.ts) - And/Or AST node classes
+- [src/expand-tree.ts](src/expand-tree.ts) - Tree expansion logic
+
+### Grammar
+
+```
+tree: element+
+element: optionableEscapedToken | optionableText | optionableGroup
+optionableEscapedToken: Backslash escapable (QuestionMark)?
+optionableText: Text (QuestionMark)?
+optionableGroup: LeftParenthesis (PlusSign)? tree (Pipe tree)* RightParenthesis (QuestionMark)?
+```
+
+### Testing
+
+Comprehensive test suite in [tests/](tests/) directory:
+- Run all tests: `yarn test`
+- Tests cover: basic patterns, groups, inclusive groups, escaping, edge cases
+
+### Build
+
+- TypeScript compilation: `yarn build`
+- Output directory: `dist/`
+
 ## Package Manager
 
 This project uses **Yarn** instead of npm.
@@ -34,6 +67,10 @@ This project uses **ESLint** with Airbnb TypeScript configuration for code quali
 **Methods:**
 - Methods that don't use `this` should include `// eslint-disable-next-line class-methods-use-this` if they conceptually belong to the class
 
+**Comments:**
+- Keep meaningful comments that explain complex logic or non-obvious behavior
+- Don't remove comments that provide context about what code does
+
 **Formatting:**
 - Use consistent spacing and indentation (handled by ESLint)
 - Break long lines appropriately
@@ -57,44 +94,14 @@ yarn build     # Ensure TypeScript compiles
   - Have a clear, descriptive message
   - Be able to pass tests independently when possible
   - Group related changes together (e.g., implementation + tests for a feature)
+- When addressing review feedback: **commit after each fix**, then move to the next one
+  - Don't batch multiple review fixes into a single commit
+  - Each review comment should typically get its own commit
 - Use conventional commit format when applicable
 - Always include co-authorship attribution when working with Claude Code
 
 ### Branching
 
-- Create feature branches for non-trivial changes
+- Create feature branches for all changes
 - Use descriptive branch names (e.g., `issue-6-remove-chevrotain`, `feature/add-validation`)
 - Keep branches focused on a single feature or fix
-
-## Project Structure
-
-This is a TypeScript package for expanding string patterns with groups, alternatives, and optional elements.
-
-### Key Files
-
-- [src/lexer.ts](src/lexer.ts) - Lexer for tokenizing patterns
-- [src/parser.ts](src/parser.ts) - Recursive descent parser
-- [src/pattern-to-tree.ts](src/pattern-to-tree.ts) - Entry point for parsing
-- [src/logical.ts](src/logical.ts) - And/Or AST node classes
-- [src/expand-tree.ts](src/expand-tree.ts) - Tree expansion logic
-
-### Grammar
-
-```
-tree: element+
-element: optionableEscapedToken | optionableText | optionableGroup
-optionableEscapedToken: Backslash escapable (QuestionMark)?
-optionableText: Text (QuestionMark)?
-optionableGroup: LeftParenthesis (PlusSign)? tree (Pipe tree)* RightParenthesis (QuestionMark)?
-```
-
-### Testing
-
-Comprehensive test suite in [tests/](tests/) directory:
-- Run all tests: `yarn test`
-- Tests cover: basic patterns, groups, inclusive groups, escaping, edge cases
-
-### Build
-
-- TypeScript compilation: `yarn build`
-- Output directory: `dist/`
