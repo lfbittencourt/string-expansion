@@ -1,16 +1,12 @@
 import Lexer from './lexer';
 import Parser from './parser';
 
-export = (pattern: string) => {
-  try {
-    const lexer = new Lexer();
-    const tokens = lexer.tokenize(pattern);
+const lexer = new Lexer();
+const parser = new Parser();
 
-    const parser = new Parser();
+export = (pattern: string) => {
+    const tokens = lexer.tokenize(pattern);
     const tree = parser.parse(tokens);
 
     return tree;
-  } catch (error) {
-    throw new Error(`Parsing error detected!\n${(error as Error).message}`);
-  }
 };
