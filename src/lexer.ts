@@ -1,9 +1,3 @@
-export interface Token {
-  type: TokenType;
-  value: string;
-  position: number;
-}
-
 export enum TokenType {
   TEXT = 'TEXT',
   LEFT_PAREN = 'LEFT_PAREN',
@@ -15,28 +9,28 @@ export enum TokenType {
   EOF = 'EOF',
 }
 
-// Token definitions with their patterns - single source of truth
+export interface Token {
+  type: TokenType;
+  value: string;
+  position: number;
+}
+
 interface TokenDefinition {
   type: TokenType;
-  pattern: string;
+  pattern: RegExp;
   escapable?: boolean;
 }
 
 export const tokenDefinitions: TokenDefinition[] = [
-  { type: TokenType.LEFT_PAREN, pattern: '(', escapable: true },
-  { type: TokenType.RIGHT_PAREN, pattern: ')', escapable: true },
-  { type: TokenType.QUESTION_MARK, pattern: '?', escapable: true },
-  { type: TokenType.PIPE, pattern: '|', escapable: true },
-  { type: TokenType.PLUS_SIGN, pattern: '+', escapable: true },
-  { type: TokenType.BACKSLASH, pattern: '\\', escapable: true },
+  { type: TokenType.LEFT_PAREN, pattern: /^\(/, escapable: true },
+  { type: TokenType.RIGHT_PAREN, pattern: /^\)/, escapable: true },
+  { type: TokenType.QUESTION_MARK, pattern: /^\?/, escapable: true },
+  { type: TokenType.PIPE, pattern: /^\|/, escapable: true },
+  { type: TokenType.PLUS_SIGN, pattern: /^\+/, escapable: true },
+  { type: TokenType.BACKSLASH, pattern: /^\\/, escapable: true },
+  { type: TokenType.TEXT, pattern: /(\w|\s)+/, escapable: false },
+  { type: TokenType.EOF, pattern: /^$/, escapable: false },
 ];
-
-export const escapableTokenTypes = tokenDefinitions
-  .filter((def) => def.escapable)
-  .map((def) => def.type);
-
-// Text token pattern
-export const textPattern = /[\w\s]/;
 
 export default class Lexer {
   private input: string = '';
@@ -46,50 +40,44 @@ export default class Lexer {
   tokenize(input: string): Token[] {
     this.input = input;
     this.position = 0;
+
     const tokens: Token[] = [];
 
     while (this.position < this.input.length) {
       const tokenStart = this.position;
+      let matched = false;
 
-      // Try to match special tokens
-      const matchedToken = tokenDefinitions.find((tokenDef) => (
-        this.input.startsWith(tokenDef.pattern, this.position)
-      ));
+      for (const tokenDefinition of tokenDefinitions) {
+        const match = this.input
+          .substring(this.position)
+          .match(tokenDefinition.pattern);
 
-      if (matchedToken) {
-        tokens.push({
-          type: matchedToken.type,
-          value: matchedToken.pattern,
-          position: tokenStart,
-        });
-        this.position += matchedToken.pattern.length;
-      } else {
-        // If no special token matched, try text
-        const char = this.input[this.position];
-        if (this.isTextChar(char)) {
-          const text = this.consumeText();
-          tokens.push({ type: TokenType.TEXT, value: text, position: tokenStart });
-        } else {
-          throw new Error(`Unexpected character '${char}' at position ${this.position}`);
+        if (match) {
+          tokens.push({
+            type: tokenDefinition.type,
+            value: match[0],
+            position: tokenStart,
+          });
+
+          this.position += match[0].length;
+
+          matched = true;
+
+          break;
         }
+      }
+
+      if (!matched) {
+        const char = this.input[this.position];
+
+        throw new Error(
+          `Unexpected character '${char}' at position ${this.position}`,
+        );
       }
     }
 
     tokens.push({ type: TokenType.EOF, value: '', position: this.position });
+
     return tokens;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private isTextChar(char: string): boolean {
-    return textPattern.test(char);
-  }
-
-  private consumeText(): string {
-    let text = '';
-    while (this.position < this.input.length && this.isTextChar(this.input[this.position])) {
-      text += this.input[this.position];
-      this.position += 1;
-    }
-    return text;
   }
 }
