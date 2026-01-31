@@ -18,7 +18,7 @@ export interface Token {
 interface TokenDefinition {
   type: TokenType;
   pattern: RegExp;
-  escapable?: boolean;
+  escapable: boolean;
 }
 
 export const tokenDefinitions: TokenDefinition[] = [
