@@ -1,22 +1,10 @@
-import { escapableTokenTypes, tokenDefinitions } from '../../src/lexer';
-
 import expand from '../../src';
 
 describe('escaping', () => {
   it('should escape escaped tokens', () => {
-    // Build the test pattern from tokenDefinitions
-    const escapablePatterns = tokenDefinitions
-      .filter((def) => escapableTokenTypes.includes(def.type))
-      .map((def) => `\\${def.pattern}`)
-      .join('');
+    const result = expand('\\(\\)\\?\\|\\+\\\\').sort();
 
-    const expectedPatterns = tokenDefinitions
-      .filter((def) => escapableTokenTypes.includes(def.type))
-      .map((def) => def.pattern)
-      .join('');
-
-    const result = expand(escapablePatterns).sort();
-    expect(result).toEqual([expectedPatterns].sort());
+    expect(result).toEqual(['()?|+\\'].sort());
   });
 
   it('should escape escape parenthesis', () => {
