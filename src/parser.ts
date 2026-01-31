@@ -104,8 +104,8 @@ export default class Parser {
 
   private consumeEscapable(): Token {
     const escapableTypes = tokenDefinitions
-      .filter((def) => def.escapable)
-      .map((def) => def.type);
+      .filter((tokenDefinition) => tokenDefinition.escapable)
+      .map((tokenDefinition) => tokenDefinition.type);
 
     if (escapableTypes.includes(this.peek().type)) {
       return this.advance();

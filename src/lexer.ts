@@ -18,7 +18,7 @@ export interface Token {
 interface TokenDefinition {
   type: TokenType;
   pattern: RegExp;
-  escapable?: boolean;
+  escapable: boolean;
 }
 
 export const tokenDefinitions: TokenDefinition[] = [
@@ -28,7 +28,7 @@ export const tokenDefinitions: TokenDefinition[] = [
   { type: TokenType.PIPE, pattern: /^\|/, escapable: true },
   { type: TokenType.PLUS_SIGN, pattern: /^\+/, escapable: true },
   { type: TokenType.BACKSLASH, pattern: /^\\/, escapable: true },
-  { type: TokenType.TEXT, pattern: /(\w|\s)+/, escapable: false },
+  { type: TokenType.TEXT, pattern: /^(\w|\s)+/, escapable: false },
   { type: TokenType.EOF, pattern: /^$/, escapable: false },
 ];
 
