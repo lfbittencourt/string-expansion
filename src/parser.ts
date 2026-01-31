@@ -1,7 +1,8 @@
 import {
   And, LogicalChild, LogicalChildren, Or,
 } from './logical';
-import { Token, TokenType } from './lexer';
+
+import { Token, tokenDefinitions, TokenType } from './lexer';
 
 /**
  * GRAMMAR
@@ -38,6 +39,7 @@ export default class Parser {
   parse(tokens: Token[]): LogicalChild {
     this.tokens = tokens;
     this.position = 0;
+
     [this.current] = tokens;
 
     const tree = this.tree();
@@ -101,14 +103,9 @@ export default class Parser {
   }
 
   private consumeEscapable(): Token {
-    const escapableTypes = [
-      TokenType.BACKSLASH,
-      TokenType.LEFT_PAREN,
-      TokenType.RIGHT_PAREN,
-      TokenType.PIPE,
-      TokenType.PLUS_SIGN,
-      TokenType.QUESTION_MARK,
-    ];
+    const escapableTypes = tokenDefinitions
+      .filter((def) => def.escapable)
+      .map((def) => def.type);
 
     if (escapableTypes.includes(this.peek().type)) {
       return this.advance();
