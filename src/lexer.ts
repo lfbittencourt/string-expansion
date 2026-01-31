@@ -45,9 +45,7 @@ export default class Lexer {
 
     while (this.position < this.input.length) {
       const tokenStart = this.position;
-      let matched = false;
-
-      for (const tokenDefinition of tokenDefinitions) {
+      const matchedToken = tokenDefinitions.find((tokenDefinition) => {
         const match = this.input
           .substring(this.position)
           .match(tokenDefinition.pattern);
@@ -61,13 +59,13 @@ export default class Lexer {
 
           this.position += match[0].length;
 
-          matched = true;
-
-          break;
+          return true;
         }
-      }
 
-      if (!matched) {
+        return false;
+      });
+
+      if (!matchedToken) {
         const char = this.input[this.position];
 
         throw new Error(
