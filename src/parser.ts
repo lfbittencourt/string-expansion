@@ -1,17 +1,8 @@
-import { EmbeddedActionsParser } from 'chevrotain';
+import {
+  And, LogicalChild, LogicalChildren, Or,
+} from './logical';
 
-import { And, LogicalChildren, Or } from './logical';
-
-import tokens, {
-  Backslash,
-  escapableTokens,
-  LeftParenthesis,
-  Pipe,
-  PlusSign,
-  QuestionMark,
-  RightParenthesis,
-  Text,
-} from './tokens';
+import { Token, tokenDefinitions, TokenType } from './lexer';
 
 /**
  * GRAMMAR
@@ -38,56 +29,129 @@ import tokens, {
  * tree:
  *   element+
  */
-export default class Parser extends EmbeddedActionsParser {
-  constructor() {
-    super(tokens);
+export default class Parser {
+  private tokens: Token[] = [];
 
-    this.performSelfAnalysis();
-  }
+  private position: number = 0;
 
-  private optionableEscapedToken = this.RULE('escapedToken', () => {
-    this.CONSUME1(Backslash);
+  private current: Token = { type: TokenType.EOF, value: '', position: 0 };
 
-    const token = this.OR(
-      escapableTokens.map((escapableToken) => ({ ALT: () => this.CONSUME2(escapableToken) })),
-    );
+  parse(tokens: Token[]): LogicalChild {
+    this.tokens = tokens;
+    this.position = 0;
 
-    if (this.OPTION(() => this.CONSUME(QuestionMark))) {
-      return new Or(token.image, '');
+    [this.current] = tokens;
+
+    const tree = this.tree();
+
+    if (this.current.type !== TokenType.EOF) {
+      throw this.error('Expected end of input');
     }
 
-    return token.image;
-  });
+    return tree;
+  }
 
-  private optionableText = this.RULE('optionalText', () => {
-    const text: string = this.CONSUME(Text).image;
+  private tree(): LogicalChild {
+    const children: LogicalChildren = [];
 
-    if (this.OPTION(() => this.CONSUME(QuestionMark))) {
+    do {
+      children.push(this.element());
+    } while (this.isStartOfElement());
+
+    // If there's only one child, return it directly to avoid unnecessary hops
+    if (children.length === 1) {
+      return children[0];
+    }
+
+    return new And(...children);
+  }
+
+  // Check if current token can start an element (for lookahead in tree())
+  private isStartOfElement(): boolean {
+    const { type } = this.peek();
+    return type === TokenType.BACKSLASH
+           || type === TokenType.TEXT
+           || type === TokenType.LEFT_PAREN;
+  }
+
+  private element(): LogicalChild {
+    if (this.peek().type === TokenType.BACKSLASH) {
+      return this.optionableEscapedToken();
+    }
+    if (this.peek().type === TokenType.TEXT) {
+      return this.optionableText();
+    }
+    if (this.peek().type === TokenType.LEFT_PAREN) {
+      return this.optionableGroup();
+    }
+
+    throw this.unexpectedToken('element');
+  }
+
+  private optionableEscapedToken(): LogicalChild {
+    this.consume(TokenType.BACKSLASH);
+
+    const escapable = this.consumeEscapable();
+    const { value } = escapable;
+
+    if (this.match(TokenType.QUESTION_MARK)) {
+      this.advance();
+      return new Or(value, '');
+    }
+
+    return value;
+  }
+
+  private consumeEscapable(): Token {
+    const escapableTypes = tokenDefinitions
+      .filter((def) => def.escapable)
+      .map((def) => def.type);
+
+    if (escapableTypes.includes(this.peek().type)) {
+      return this.advance();
+    }
+
+    throw this.error('Expected escapable character after backslash');
+  }
+
+  private optionableText(): LogicalChild {
+    const textToken = this.consume(TokenType.TEXT);
+    const text = textToken.value;
+
+    // If followed by '?', make the last character optional: "ab?" → Or("ab", "a")
+    if (this.match(TokenType.QUESTION_MARK)) {
+      this.advance();
       return new Or(text, text.slice(0, -1));
     }
 
     return text;
-  });
+  }
 
-  private optionableGroup = this.RULE('optionableGroup', () => {
+  private optionableGroup(): LogicalChild {
     const alternatives: LogicalChildren = [];
 
-    this.CONSUME(LeftParenthesis);
+    this.consume(TokenType.LEFT_PAREN);
 
-    const isIgroup = this.OPTION1(() => this.CONSUME(PlusSign));
+    const isIgroup = this.match(TokenType.PLUS_SIGN);
+    if (isIgroup) {
+      this.advance();
+    }
 
-    this.AT_LEAST_ONE_SEP({
-      SEP: Pipe,
-      DEF: () => alternatives.push(this.SUBRULE(this.tree)),
-    });
+    alternatives.push(this.tree());
 
-    this.CONSUME(RightParenthesis);
+    while (this.match(TokenType.PIPE)) {
+      this.advance();
+      alternatives.push(this.tree());
+    }
+
+    this.consume(TokenType.RIGHT_PAREN);
 
     if (isIgroup && alternatives.length > 1) {
       alternatives.push(new And(...alternatives));
     }
 
-    if (this.OPTION2(() => this.CONSUME(QuestionMark))) {
+    if (this.match(TokenType.QUESTION_MARK)) {
+      this.advance();
       alternatives.push('');
     }
 
@@ -97,23 +161,41 @@ export default class Parser extends EmbeddedActionsParser {
     }
 
     return new Or(...alternatives);
-  });
+  }
 
-  private element = this.RULE('element', () => this.OR([
-    { ALT: () => this.SUBRULE(this.optionableEscapedToken) },
-    { ALT: () => this.SUBRULE(this.optionableText) },
-    { ALT: () => this.SUBRULE(this.optionableGroup) },
-  ]));
+  private peek(): Token {
+    return this.current;
+  }
 
-  public tree = this.RULE('tree', () => {
-    const children: LogicalChildren = [];
-
-    this.AT_LEAST_ONE(() => children.push(this.SUBRULE(this.element)));
-
-    if (children.length === 1) {
-      return children[0];
+  private advance(): Token {
+    const previous = this.current;
+    if (this.position < this.tokens.length - 1) {
+      this.position += 1;
+      this.current = this.tokens[this.position];
     }
+    return previous;
+  }
 
-    return new And(...children);
-  });
+  private match(...types: TokenType[]): boolean {
+    return types.includes(this.peek().type);
+  }
+
+  private consume(expected: TokenType): Token {
+    if (this.peek().type === expected) {
+      return this.advance();
+    }
+    throw this.error(`Expected ${expected} but found ${this.peek().type}`);
+  }
+
+  private error(message: string): Error {
+    const token = this.peek();
+    return new Error(`Parse error at position ${token.position}: ${message}`);
+  }
+
+  private unexpectedToken(context: string): Error {
+    const token = this.peek();
+    return new Error(
+      `Unexpected token ${token.type} at position ${token.position} while parsing ${context}`,
+    );
+  }
 }

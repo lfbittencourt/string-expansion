@@ -1,12 +1,10 @@
-import { escapableTokens } from '../../src/tokens';
-
 import expand from '../../src';
 
 describe('escaping', () => {
   it('should escape escaped tokens', () => {
-    const result = expand(escapableTokens.map((token) => `\\${token.PATTERN}`).join('')).sort();
+    const result = expand('\\(\\)\\?\\|\\+\\\\').sort();
 
-    expect(result).toEqual([escapableTokens.map((token) => token.PATTERN).join('')].sort());
+    expect(result).toEqual(['()?|+\\'].sort());
   });
 
   it('should escape escape parenthesis', () => {

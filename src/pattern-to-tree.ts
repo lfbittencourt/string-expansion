@@ -1,23 +1,12 @@
-import { Lexer } from 'chevrotain';
-
+import Lexer from './lexer';
 import Parser from './parser';
-import tokens from './tokens';
 
-const lexer = new Lexer(tokens);
+const lexer = new Lexer();
 const parser = new Parser();
 
 export = (pattern: string) => {
-  const lexingResult = lexer.tokenize(pattern);
-
-  parser.input = lexingResult.tokens;
-
-  const tree = parser.tree();
-
-  if (parser.errors.length > 0) {
-    throw new Error(
-      `Parsing error detected!\n${parser.errors[0].message}`,
-    );
-  }
+  const tokens = lexer.tokenize(pattern);
+  const tree = parser.parse(tokens);
 
   return tree;
 };
