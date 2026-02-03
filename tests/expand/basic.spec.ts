@@ -12,4 +12,10 @@ describe('basic', () => {
 
     expect(result).toEqual(['a', 'ab'].sort());
   });
+
+  it('should expand text with non-ASCII and special characters', () => {
+    const result = expand('café-latte');
+
+    expect(result).toEqual(['café-latte']);
+  });
 });
