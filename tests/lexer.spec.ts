@@ -59,6 +59,15 @@ describe('lexer', () => {
       expect(tokens[tokens.length - 1].type).toBe(TokenType.EOF);
     });
 
+    it('should tokenize text with non-ASCII and special characters', () => {
+      const tokens = lexer.tokenize('café-latte');
+
+      expect(tokens).toEqual([
+        { type: TokenType.TEXT, value: 'café-latte', position: 0 },
+        { type: TokenType.EOF, value: '', position: 10 },
+      ]);
+    });
+
     it('should track token positions', () => {
       const tokens = lexer.tokenize('a(b|c)');
 
@@ -66,11 +75,4 @@ describe('lexer', () => {
     });
   });
 
-  describe('errors', () => {
-    it('should throw on unsupported characters', () => {
-      expect(() => lexer.tokenize('ax-by')).toThrow(
-        "Unexpected character '-' at position 2",
-      );
-    });
-  });
 });
