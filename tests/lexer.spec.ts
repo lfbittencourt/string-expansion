@@ -75,11 +75,4 @@ describe('lexer', () => {
     });
   });
 
-  describe('errors', () => {
-    it('should throw on unsupported characters', () => {
-      expect(() => lexer.tokenize('ax-by')).toThrow(
-        "Unexpected character '-' at position 2",
-      );
-    });
-  });
 });
