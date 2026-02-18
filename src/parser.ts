@@ -132,8 +132,8 @@ export default class Parser {
 
     this.consume(TokenType.LEFT_PAREN);
 
-    const isIgroup = this.match(TokenType.PLUS_SIGN);
-    if (isIgroup) {
+    const isAdditiveGroup = this.match(TokenType.PLUS_SIGN);
+    if (isAdditiveGroup) {
       this.advance();
     }
 
@@ -146,7 +146,7 @@ export default class Parser {
 
     this.consume(TokenType.RIGHT_PAREN);
 
-    if (isIgroup && alternatives.length > 1) {
+    if (isAdditiveGroup && alternatives.length > 1) {
       alternatives.push(new And(...alternatives));
     }
 
