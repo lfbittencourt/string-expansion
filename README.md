@@ -1,4 +1,4 @@
-# string-expansion
+# String Expansion
 
 [![CI](https://github.com/lfbittencourt/string-expansion/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/lfbittencourt/string-expansion/actions/workflows/test-and-build.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
