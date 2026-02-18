@@ -15,6 +15,13 @@ expand('(Mary|John) Smith(son)?');
 > **Note:** Only CommonJS (`require`) is supported at this time. ESM support is
 > tracked in [#12](https://github.com/lfbittencourt/string-expansion/issues/12).
 
+## Use cases
+
+- **Name variant matching** — nicknames, maiden names, spelling alternatives
+- **Search query expansion** — generate all query strings from one compact pattern
+- **Test data generation** — produce exhaustive input sets from a compact definition
+- **Localization** — cover spelling variants like `colo(u?)r` or `program(me?)`
+
 ## Installation
 
 ```bash
@@ -31,6 +38,11 @@ expand(pattern: string): string[]
 
 Parses `pattern` and returns an array of all matching strings. Throws an
 `Error` if the pattern is invalid.
+
+Results are returned in **expansion order**, not sorted. Duplicate strings are
+not removed — `(a|a)` returns `['a', 'a']`. The output size grows
+exponentially with the number of alternatives and optional elements, so use
+with care in large patterns.
 
 ## Syntax
 
@@ -82,6 +94,13 @@ Prefix the group with `+` to also output every combination of its options:
 
 ```
 (+a|b) => ['a', 'b', 'ab']
+```
+
+With three or more options, each option appears individually plus all of them
+concatenated in order — not every pairwise combination:
+
+```
+(+a|b|c) => ['a', 'b', 'c', 'abc']
 ```
 
 Optional inclusive groups include the empty string:
