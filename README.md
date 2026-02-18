@@ -1,40 +1,39 @@
-# String Expansion
+# string-expansion
 
-This package expands strings using nested `And` and `Or` objects into all
-possible combinations.
+Expand string patterns into all possible combinations.
+
+```js
+const expand = require('string-expansion');
+
+expand('(Mary|John) Smith(son)?');
+// => ['Mary Smith', 'Mary Smithson', 'John Smith', 'John Smithson']
+```
+
+> **Note:** Only CommonJS (`require`) is supported at this time. ESM support is
+> tracked in [#12](https://github.com/lfbittencourt/string-expansion/issues/12).
 
 ## Installation
 
-Using `yarn`:
-
-```bash
-yarn install string-expansion
-```
-
-Using `npm`:
-
 ```bash
 npm install string-expansion
+# or
+yarn add string-expansion
 ```
 
-## Usage
+## API
 
-```javascript
-const expand = require('string-expansion'); // We only support CommonJS for now
-
-const result = expand('(a|b)');
-
-console.log(result); // ['a', 'b']
+```ts
+expand(pattern: string): string[]
 ```
+
+Parses `pattern` and returns an array of all matching strings. Throws an
+`Error` if the pattern is invalid.
 
 ## Syntax
 
-The syntax is similar to regular expressions and its composed by just a few
-different tokens.
-
 ### Literals
 
-Literal strings output themselves:
+Plain text is returned as-is:
 
 ```
 a => ['a']
@@ -42,7 +41,7 @@ a => ['a']
 
 ### Optional characters
 
-Optional characters are followed by a `?`:
+Append `?` to make the preceding character optional:
 
 ```
 ab? => ['a', 'ab']
@@ -50,37 +49,25 @@ ab? => ['a', 'ab']
 
 ### Groups
 
-Groups are used to group options. The group is defined by parentheses and the
-options are separated by `|`:
+Parentheses group alternatives separated by `|`:
 
 ```
 (a|b) => ['a', 'b']
-```
-
-Groups can have a single option:
-
-```
-(a) => ['a']
+(a)   => ['a']
 ```
 
 ### Optional groups
 
-Optional groups are followed by a `?`:
+Append `?` to a group to include the empty string as an option:
 
 ```
-(a|b)? => ['a', 'b', '']
-```
-
-You can use a single-option group combined with the optional character `?` to
-make more than one character optional:
-
-```
-(ab)? => ['ab', '']
+(a|b)? => ['', 'a', 'b']
+(ab)?  => ['', 'ab']
 ```
 
 ### Nested groups
 
-Groups can be nested:
+Groups can be nested arbitrarily:
 
 ```
 (a(b|c)) => ['ab', 'ac']
@@ -88,21 +75,19 @@ Groups can be nested:
 
 ### Inclusive groups
 
-You can also use inclusive groups (or simply igroups) by using a plus sign (`+`)
-before the options. Different from the standard groups, igroups also output an
-option that concatenates all of its options:
+Prefix the group with `+` to also output every combination of its options:
 
 ```
 (+a|b) => ['a', 'b', 'ab']
 ```
 
-As with standard groups, igroups can be optional:
+Optional inclusive groups include the empty string:
 
 ```
-(+a|b)? => ['a', 'b', 'ab', '']
+(+a|b)? => ['', 'a', 'b', 'ab']
 ```
 
-Igroups can also be nested:
+Inclusive groups can be nested:
 
 ```
 (+a|(+b|c)) => ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
@@ -110,15 +95,17 @@ Igroups can also be nested:
 
 ### Escaping
 
-You can escape special characters by using a backslash (`\`):
+Prefix any special character with `\` to treat it as a literal:
 
 ```
 \(a\|b\) => ['(a|b)']
 ```
 
+Special characters: `( ) | + ? \`
+
 ### Complex patterns
 
-Finally, you can mix all of them into complex patterns:
+All features compose freely:
 
 ```
 Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?) => [
@@ -139,3 +126,7 @@ Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?) => [
   'Mary Smithson',
 ]
 ```
+
+## License
+
+MIT
