@@ -1,4 +1,6 @@
 import expandTree from './expand-tree';
 import patternToTree from './pattern-to-tree';
 
-export = (pattern: string) => expandTree(patternToTree(pattern));
+export default function expand(pattern: string): string[] {
+  return expandTree(patternToTree(pattern));
+}

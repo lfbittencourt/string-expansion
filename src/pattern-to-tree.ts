@@ -4,9 +4,9 @@ import Parser from './parser';
 const lexer = new Lexer();
 const parser = new Parser();
 
-export = (pattern: string) => {
+export default function patternToTree(pattern: string) {
   const tokens = lexer.tokenize(pattern);
   const tree = parser.parse(tokens);
 
   return tree;
-};
+}
