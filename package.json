@@ -27,7 +27,7 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "test": "jest",
-    "test:integration": "yarn build && yarn --cwd tests/integration && node tests/integration/cjs/index.cjs && node tests/integration/esm/index.mjs"
+    "test:integration": "yarn build && yarn --cwd tests/integration install --frozen-lockfile && node tests/integration/cjs/index.cjs && node tests/integration/esm/index.mjs"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
