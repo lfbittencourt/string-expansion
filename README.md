@@ -3,16 +3,16 @@
 Expand string patterns into all possible combinations.
 
 ```js
-// ESM
 import expand from 'string-expansion';
 
-// CJS
-const expand = require('string-expansion');
-```
-
-```js
 expand('(Mary|John) Smith(son)?');
 // => ['Mary Smith', 'Mary Smithson', 'John Smith', 'John Smithson']
+```
+
+Also available as CommonJS:
+
+```js
+const expand = require('string-expansion');
 ```
 
 ## Use cases
