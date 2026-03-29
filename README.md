@@ -88,9 +88,10 @@ Groups can be nested arbitrarily:
 (a(b|c)) => ['ab', 'ac']
 ```
 
-### Inclusive groups
+### Additive groups
 
-Prefix the group with `+` to also output every combination of its options:
+Prefix the group with `+` to also output all options individually plus their
+full concatenation in order:
 
 ```
 (+a|b) => ['a', 'b', 'ab']
@@ -103,13 +104,13 @@ concatenated in order — not every pairwise combination:
 (+a|b|c) => ['a', 'b', 'c', 'abc']
 ```
 
-Optional inclusive groups include the empty string:
+Optional additive groups include the empty string:
 
 ```
 (+a|b)? => ['', 'a', 'b', 'ab']
 ```
 
-Inclusive groups can be nested:
+Additive groups can be nested:
 
 ```
 (+a|(+b|c)) => ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
