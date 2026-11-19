@@ -6,7 +6,7 @@ Expand string patterns into all possible combinations. Especially useful for nam
 import expand from 'string-expansion';
 
 expand('(Mary|John) Smith(son)?');
-// => ['Mary Smith', 'Mary Smithson', 'John Smith', 'John Smithson']
+// => ['Mary Smithson', 'Mary Smith', 'John Smithson', 'John Smith']
 ```
 
 Also available as CommonJS:
@@ -49,7 +49,7 @@ Optional characters are followed by a `?`:
 
 ```ts
 expand('ab?');
-// => ['a', 'ab']
+// => ['ab', 'a']
 ```
 
 ### Groups
@@ -117,7 +117,7 @@ Igroups can also be nested:
 
 ```ts
 expand('(+a|(+b|c))');
-// => ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
+// => ['a', 'b', 'c', 'bc', 'ab', 'ac', 'abc']
 ```
 
 ### Escaping
@@ -138,20 +138,20 @@ Finally, you can mix all of them into complex patterns:
 ```ts
 expand('Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?)');
 // => [
-//   'Mary Elisabeth Simmons',
-//   'Mary Elisabeth Simmons Smith',
-//   'Mary Elisabeth Simmons Smithson',
-//   'Mary Elisabeth Smith',
-//   'Mary Elisabeth Smithson',
 //   'Mary Elizabeth Simmons',
-//   'Mary Elizabeth Simmons Smith',
-//   'Mary Elizabeth Simmons Smithson',
-//   'Mary Elizabeth Smith',
 //   'Mary Elizabeth Smithson',
+//   'Mary Elizabeth Smith',
+//   'Mary Elizabeth Simmons Smithson',
+//   'Mary Elizabeth Simmons Smith',
+//   'Mary Elisabeth Simmons',
+//   'Mary Elisabeth Smithson',
+//   'Mary Elisabeth Smith',
+//   'Mary Elisabeth Simmons Smithson',
+//   'Mary Elisabeth Simmons Smith',
 //   'Mary Simmons',
-//   'Mary Simmons Smith',
-//   'Mary Simmons Smithson',
-//   'Mary Smith',
 //   'Mary Smithson',
+//   'Mary Smith',
+//   'Mary Simmons Smithson',
+//   'Mary Simmons Smith',
 // ]
 ```
