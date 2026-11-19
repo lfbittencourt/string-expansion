@@ -18,6 +18,10 @@
     }
   },
   "author": "LF Bittencourt <lf@lfbittencourt.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lfbittencourt/string-expansion.git"
+  },
   "license": "MIT",
   "files": [
     "dist"
