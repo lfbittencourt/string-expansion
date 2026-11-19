@@ -1,12 +1,12 @@
 # String Expansion
 
-Expand string patterns into all possible combinations.
+Expand string patterns into all possible combinations. Especially useful for name spelling variations.
 
-```js
+```ts
 import expand from 'string-expansion';
 
 expand('(Mary|John) Smith(son)?');
-// => ['Mary Smith', 'Mary Smithson', 'John Smith', 'John Smithson']
+// => ['Mary Smithson', 'Mary Smith', 'John Smithson', 'John Smith']
 ```
 
 Also available as CommonJS:
@@ -14,13 +14,6 @@ Also available as CommonJS:
 ```js
 const expand = require('string-expansion');
 ```
-
-## Use cases
-
-- **Name variant matching** — nicknames, maiden names, spelling alternatives
-- **Search query expansion** — generate all query strings from one compact pattern
-- **Test data generation** — produce exhaustive input sets from a compact definition
-- **Localization** — cover spelling variants like `colo(u?)r` or `program(me?)`
 
 ## Installation
 
@@ -36,115 +29,129 @@ yarn add string-expansion
 expand(pattern: string): string[]
 ```
 
-Parses `pattern` and returns an array of all matching strings. Throws an
-`Error` if the pattern is invalid.
-
-Results are returned in **expansion order**, not sorted. Duplicate strings are
-not removed — `(a|a)` returns `['a', 'a']`. The output size grows
-exponentially with the number of alternatives and optional elements, so use
-with care in large patterns.
-
 ## Syntax
+
+The syntax is similar to regular expressions and its composed by just a few
+different tokens.
 
 ### Literals
 
-Plain text is returned as-is:
+Literal strings output themselves:
 
-```
-a => ['a']
+```ts
+expand('a');
+// => ['a']
 ```
 
 ### Optional characters
 
-Append `?` to make the preceding character optional:
+Optional characters are followed by a `?`:
 
-```
-ab? => ['a', 'ab']
+```ts
+expand('ab?');
+// => ['ab', 'a']
 ```
 
 ### Groups
 
-Parentheses group alternatives separated by `|`:
+Groups are used to group options. The group is defined by parentheses and the
+options are separated by `|`:
 
+```ts
+expand('(a|b)');
+// => ['a', 'b']
 ```
-(a|b) => ['a', 'b']
-(a)   => ['a']
+
+Groups can have a single option:
+
+```ts
+expand('(a)');
+// => ['a']
 ```
 
 ### Optional groups
 
-Append `?` to a group to include the empty string as an option:
+Optional groups are followed by a `?`:
 
+```ts
+expand('(a|b)?');
+// => ['a', 'b', '']
 ```
-(a|b)? => ['', 'a', 'b']
-(ab)?  => ['', 'ab']
+
+You can use a single-option group combined with the optional character `?` to
+make more than one character optional:
+
+```ts
+expand('(ab)?');
+// => ['ab', '']
 ```
 
 ### Nested groups
 
-Groups can be nested arbitrarily:
+Groups can be nested:
 
-```
-(a(b|c)) => ['ab', 'ac']
+```ts
+expand('(a(b|c))');
+// => ['ab', 'ac']
 ```
 
 ### Inclusive groups
 
-Prefix the group with `+` to also output every combination of its options:
+You can also use inclusive groups (or simply igroups) by using a plus sign (`+`)
+before the options. Different from the standard groups, igroups also output an
+option that concatenates all of its options:
 
-```
-(+a|b) => ['a', 'b', 'ab']
-```
-
-With three or more options, each option appears individually plus all of them
-concatenated in order — not every pairwise combination:
-
-```
-(+a|b|c) => ['a', 'b', 'c', 'abc']
+```ts
+expand('(+a|b)');
+// => ['a', 'b', 'ab']
 ```
 
-Optional inclusive groups include the empty string:
+As with standard groups, igroups can be optional:
 
-```
-(+a|b)? => ['', 'a', 'b', 'ab']
+```ts
+expand('(+a|b)?');
+// => ['a', 'b', 'ab', '']
 ```
 
-Inclusive groups can be nested:
+Igroups can also be nested:
 
-```
-(+a|(+b|c)) => ['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
+```ts
+expand('(+a|(+b|c))');
+// => ['a', 'b', 'c', 'bc', 'ab', 'ac', 'abc']
 ```
 
 ### Escaping
 
-Prefix any special character with `\` to treat it as a literal:
+You can escape special characters by using a backslash (`\`):
 
-```
-\(a\|b\) => ['(a|b)']
+```ts
+expand('\\(a\\|b\\)');
+// => ['(a|b)']
 ```
 
 Special characters: `( ) | + ? \`
 
 ### Complex patterns
 
-All features compose freely:
+Finally, you can mix all of them into complex patterns:
 
-```
-Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?) => [
-  'Mary Elisabeth Simmons',
-  'Mary Elisabeth Simmons Smith',
-  'Mary Elisabeth Simmons Smithson',
-  'Mary Elisabeth Smith',
-  'Mary Elisabeth Smithson',
-  'Mary Elizabeth Simmons',
-  'Mary Elizabeth Simmons Smith',
-  'Mary Elizabeth Simmons Smithson',
-  'Mary Elizabeth Smith',
-  'Mary Elizabeth Smithson',
-  'Mary Simmons',
-  'Mary Simmons Smith',
-  'Mary Simmons Smithson',
-  'Mary Smith',
-  'Mary Smithson',
-]
+```ts
+expand('Mary( Eli(z|s)abeth)?(+ Simmons| Smith(son)?)');
+// => [
+//   'Mary Elizabeth Simmons',
+//   'Mary Elizabeth Smithson',
+//   'Mary Elizabeth Smith',
+//   'Mary Elizabeth Simmons Smithson',
+//   'Mary Elizabeth Simmons Smith',
+//   'Mary Elisabeth Simmons',
+//   'Mary Elisabeth Smithson',
+//   'Mary Elisabeth Smith',
+//   'Mary Elisabeth Simmons Smithson',
+//   'Mary Elisabeth Simmons Smith',
+//   'Mary Simmons',
+//   'Mary Smithson',
+//   'Mary Smith',
+//   'Mary Simmons Smithson',
+//   'Mary Simmons Smith',
+// ]
 ```

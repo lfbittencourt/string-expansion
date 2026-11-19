@@ -1,7 +1,7 @@
 {
   "name": "string-expansion",
   "version": "0.0.0",
-  "description": "Expand string patterns into all possible combinations",
+  "description": "Expand string patterns into all possible combinations. Especially useful for name spelling variations.",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.cts",
