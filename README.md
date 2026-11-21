@@ -120,6 +120,16 @@ expand('(+a|(+b|c))');
 // => ['a', 'b', 'c', 'bc', 'ab', 'ac', 'abc']
 ```
 
+### Spaced inclusive groups
+
+Use two plus signs (`++`) to join the concatenated option with whitespace. This
+is useful for names, where each option is a separate word:
+
+```ts
+expand('(++John|Paul) Smith');
+// => ['John Smith', 'Paul Smith', 'John Paul Smith']
+```
+
 ### Escaping
 
 You can escape special characters by using a backslash (`\`):
