@@ -24,4 +24,16 @@ describe('inclusive groups', () => {
 
     expect(result).toEqual(['a', 'ab', 'abc', 'ac', 'b', 'bc', 'c'].sort());
   });
+
+  it('should join the concatenated option with whitespace in spaced igroups', () => {
+    const result = expand('(++a|b|c)').sort();
+
+    expect(result).toEqual(['a', 'b', 'c', 'a b c'].sort());
+  });
+
+  it('should not treat an escaped plus sign as a spaced igroup', () => {
+    const result = expand('(+\\+|-)').sort();
+
+    expect(result).toEqual(['+', '-', '+-'].sort());
+  });
 });

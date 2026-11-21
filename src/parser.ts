@@ -21,7 +21,7 @@ import { Token, tokenDefinitions, TokenType } from './lexer';
  *
  * optionableGroup:
  *   LeftParenthesis
- *   (PlusSign)?
+ *   (PlusSign (PlusSign)?)?
  *   tree (Pipe tree)*
  *   RightParenthesis
  *   (QuestionMark)?
@@ -133,8 +133,16 @@ export default class Parser {
     this.consume(TokenType.LEFT_PAREN);
 
     const isIgroup = this.match(TokenType.PLUS_SIGN);
+    let separator = '';
+
     if (isIgroup) {
       this.advance();
+
+      // A second plus sign joins the concatenated option with whitespace
+      if (this.match(TokenType.PLUS_SIGN)) {
+        this.advance();
+        separator = ' ';
+      }
     }
 
     alternatives.push(this.tree());
@@ -147,7 +155,17 @@ export default class Parser {
     this.consume(TokenType.RIGHT_PAREN);
 
     if (isIgroup && alternatives.length > 1) {
-      alternatives.push(new And(...alternatives));
+      const joined: LogicalChildren = [];
+
+      alternatives.forEach((alternative, index) => {
+        if (index > 0 && separator) {
+          joined.push(separator);
+        }
+
+        joined.push(alternative);
+      });
+
+      alternatives.push(new And(...joined));
     }
 
     if (this.match(TokenType.QUESTION_MARK)) {
