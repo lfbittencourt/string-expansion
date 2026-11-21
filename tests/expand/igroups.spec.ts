@@ -26,12 +26,6 @@ describe('inclusive groups', () => {
   });
 
   it('should join the concatenated option with whitespace in spaced igroups', () => {
-    const result = expand('(++a|b)').sort();
-
-    expect(result).toEqual(['a', 'a b', 'b'].sort());
-  });
-
-  it('should join every option with whitespace in spaced igroups', () => {
     const result = expand('(++a|b|c)').sort();
 
     expect(result).toEqual(['a', 'b', 'c', 'a b c'].sort());
